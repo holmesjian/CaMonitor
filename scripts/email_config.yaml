@@ -1,0 +1,3 @@
+sender_email: XXXX@XXXX.com
+app_password: abcdefghijklmnop    # 16-char app password, no spaces
+receiver_email: YYYY@YYYY.com  # where alerts go — can be same address

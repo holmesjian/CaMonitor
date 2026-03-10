@@ -1,0 +1,15 @@
+head_torso_ratio:
+  mean: 1.1874
+  std: 0.0742
+height_span:
+  mean: 0.5999
+  std: 0.0429
+hip_shoulder_ratio:
+  mean: 0.4601
+  std: 0.0123
+leg_height_ratio:
+  mean: 0.401
+  std: 0.0247
+shoulder_torso_ratio:
+  mean: 0.4175
+  std: 0.0525

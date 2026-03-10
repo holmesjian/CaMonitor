@@ -1,0 +1,46 @@
+# ── Master switch ──────────────────────────────────────────────
+mode: CHILD_MONITOR       # ADULT_TEST or CHILD_MONITOR
+                        # Always start with ADULT_TEST to calibrate threshold
+
+# ── Debug mode ─────────────────────────────────────────────────
+debug: true             # true = print [DEBUG] bbox area every frame
+                        # Set false after threshold is tuned
+
+# ── Adult filter ───────────────────────────────────────────────
+adult_filter:
+  enabled: true
+
+  # Bounding box area threshold (orientation-independent)
+  # HOW TO TUNE:
+  #   1. Set debug: true and mode: ADULT_TEST
+  #   2. Run alerts.py — watch [DEBUG] bbox area= values in terminal
+  #   3.  Move around in various poses — note your adult area values
+  #   4. Ask your son to walk/play in front of camera — note toddler values
+  #   5. Set threshold halfway between adult minimum and toddler maximum
+  #
+  # Typical values at ~2m top-down height:
+  #   Adult   : 0.08 – 0.20  (larger body occupies more frame)
+  #   Toddler : 0.02 – 0.05  (smaller body occupies less frame)
+  #   Start with 0.07 — adjust based on your measured values
+  bbox_area_threshold: 0.02
+
+# ── MediaPipe settings ─────────────────────────────────────────
+mediapipe:
+  min_detection_confidence: 0.55
+  min_tracking_confidence: 0.55
+  model_complexity: 0
+
+# ── Alert settings ─────────────────────────────────────────────
+alerts:
+  zone_entry_frames: 15      # consecutive frames before zone alert fires (~2 sec)
+  inversion_buffer: 0.05     # head must be 5% below feet to trigger
+  descent_threshold: 0.04    # hip Y delta per frame for rapid descent
+
+# ── Email settings ─────────────────────────────────────────────
+email:
+  enabled: true              # set false during tuning to avoid Gmail limit
+  cooldown_sec: 300          # 5 min between same alert type emails
+
+# ── Performance ────────────────────────────────────────────────
+performance:
+  idle_sleep_sec: 0.3        # sleep when no person detected

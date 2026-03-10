@@ -1,0 +1,21 @@
+_frame_info:
+  height: 720
+  width: 1280
+bed:
+  box:
+  - 0
+  - 250
+  - 563
+  - 720
+  conf: 0.579
+  source: bed
+  type: furniture
+chair:
+  box:
+  - 309
+  - 565
+  - 619
+  - 720
+  conf: 0.707
+  source: chair
+  type: furniture
