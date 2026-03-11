@@ -30,9 +30,9 @@ timestamp, and an attached JPEG frame showing the skeleton overlay.
 - `MEDIUM` -- furniture zones (bed edge, sofa, chairs)
 - `HIGH` -- kitchen zone (fridge, water tap/basin, and oven used as spatial anchors for zone boundary definition)
 
-Kitchen zone is defined by the convex hull of three anchor objects detected by
-YOLOv8: fridge, water tap/basin, and oven. Any keypoint inside this hull triggers
-a HIGH-severity alert.
+Kitchen zone is defined by the convex hull of anchor objects (fridge, water tap/basin,
+oven) detected by YOLOv8s during the one-time room scan. Any keypoint inside this hull
+triggers a HIGH-severity alert.
 
 ---
 
@@ -78,8 +78,9 @@ System correctly classifies elevated wrist position as climbing behaviour.*
 
 ![Room scan result](docs/room_scan_result.jpg)
 
-*Room scan output from `room_scan.py`. YOLOv8 detected 3 zones: bed (magenta filled
-polygon, left), chair x2 (cyan bounding boxes, centre). Zone definitions saved to
+*Room scan output from `room_scan.py`. YOLOv8s detected 3 zones: bed (magenta filled
+polygon, left), chair x2 (cyan bounding boxes, centre). conf=0.07 used to surface
+low-confidence furniture detections at top-down angle. Zone definitions saved to
 `zones_config.yaml` and loaded by `alerts.py` at startup. Re-run whenever camera
 position changes.*
 
@@ -88,6 +89,12 @@ position changes.*
 ## System Architecture
 
 ```
+YOLOv8s room scan at startup (one-shot, conf=0.07)
+    +---> Furniture zones (bed, sofa, chair, dining table)
+    +---> Kitchen zone (convex hull of fridge/sink/oven anchors, min 2 required)
+    v
+zones_config.yaml loaded by alerts.py at runtime
+
 Camera (Logitech StreamCam, 720p/MJPG mode, top-down ~2m height)
     |
     v
@@ -297,9 +304,29 @@ If reversed, camera falls back to YUYV -- 3x USB bandwidth, causing frame drops.
 ```bash
 python scripts/room_scan.py
 ```
-YOLOv8 maps furniture into zone boxes. Saves `zones_config.yaml`.
+YOLOv8s maps furniture and kitchen anchors into zone boxes. Saves `zones_config.yaml`.
+
+**Model selection -- YOLOv8s vs alternatives:**
+
+| Model | Size | mAP (COCO) | Pi scan time | Decision |
+|---|---|---|---|---|
+| YOLOv8n (nano) | 3.2 MB | 37.3 | ~2s | Rejected -- low-confidence detections too noisy |
+| **YOLOv8s (small)** | **11.2 MB** | **44.9** | **~5s** | **Production** |
+| YOLOv8m (medium) | 25.9 MB | 50.2 | ~20s | Unnecessary -- 5pt mAP gain not worth startup cost |
+
+YOLOv8s is the right choice because this is a **one-time scan at startup**, not live
+inference -- startup latency is not a constraint. The `s` model gives meaningfully
+better detection quality than `n` at low confidence, which matters here.
+
+**Confidence threshold: conf=0.07 -- intentionally very low.**
+A missed kitchen anchor silently disables an entire alert zone with no warning.
+Over-detection is the safer failure mode -- spurious extra boxes are caught during
+the visual review of the saved scan image. The `s` model at 0.07 produces
+trustworthy low-confidence predictions; `n` at 0.07 would produce excessive noise.
+
 For kitchen zone: ensure fridge, water tap/basin, and oven are visible in frame
-during scan -- YOLOv8 uses these as spatial anchors for the kitchen exclusion zone.
+during scan. At least 2 anchors are required to form the kitchen zone polygon.
+Re-run whenever camera position changes.
 
 ### Step 2 -- Adult Calibration (once)
 ```bash
