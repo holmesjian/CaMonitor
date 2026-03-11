@@ -42,7 +42,7 @@ All frames below are actual system output captured during live testing.
 
 ### CLEAR -- Adult Detected, Alerts Suppressed
 
-![CLEAR adult squat](docs/screenshots/clear_adult_squat.png)
+![CLEAR adult squat](docs/clear_adult_squat.png)
 
 *FPS:6.6 Frame:1359 -- Status: CLEAR. Adult in squat/crouch position near desk.
 Green border = no active alerts. Orange skeleton overlay with green keypoints tracked correctly.
@@ -53,7 +53,7 @@ despite low crouching posture -- demonstrating orientation-invariant adult class
 
 ### ZONE_ENTRY -- Toddler Enters Bed Zone
 
-![ZONE_ENTRY alert](docs/screenshots/alert_zone_entry.jpg)
+![ZONE_ENTRY alert](docs/alert_zone_entry.jpg)
 
 *FPS:4.4 Frame:2183 -- [MEDIUM] ZONE_ENTRY bed. Toddler standing and playing near
 the bed edge zone. Blue zone boxes for bed (top-left) and chair (bottom) visible.
@@ -65,7 +65,7 @@ alerting only on the toddler.*
 
 ### CLIMBING -- Toddler Reaches Above Hip Level
 
-![CLIMBING alert](docs/screenshots/alert_climbing.jpg)
+![CLIMBING alert](docs/alert_climbing.jpg)
 
 *FPS:5.2 Frame:2297 -- [HIGH] CLIMBING (wrists+knees above hip_y=0.33). Red border
 = HIGH severity alert. Toddler reaching upward with arm fully extended above head
@@ -76,7 +76,7 @@ System correctly classifies elevated wrist position as climbing behaviour.*
 
 ### Room Scan -- YOLOv8 Zone Mapping
 
-![Room scan result](docs/screenshots/room_scan_result.jpg)
+![Room scan result](docs/room_scan_result.jpg)
 
 *Room scan output from `room_scan.py`. YOLOv8 detected 3 zones: bed (magenta filled
 polygon, left), chair x2 (cyan bounding boxes, centre). Zone definitions saved to
